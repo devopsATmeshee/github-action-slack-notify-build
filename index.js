@@ -12,7 +12,7 @@ const { buildSlackAttachments, formatChannelName } = require('./src/utils');
     const token = process.env.SLACK_BOT_TOKEN;
     const slack = new WebClient(token);
 
-    core.debug(`Context: ${JSON.stringify(github.context, null, 2)}`);
+    core.setFailed(`Context: ${JSON.stringify(github.context, null, 2)}`);
 
     if (!channel && !core.getInput('channel_id')) {
       core.setFailed(`You must provider either a 'channel' or a 'channel_id'.`);
@@ -38,7 +38,7 @@ const { buildSlackAttachments, formatChannelName } = require('./src/utils');
       args.ts = messageId;
     }
 
-    core.debug(`Args: ${JSON.stringify(args, null, 2)}`);
+    core.info(`Args: ${JSON.stringify(args, null, 2)}`);
     const response = await slack.chat[apiMethod](args);
 
     core.setOutput('message_id', response.ts);
