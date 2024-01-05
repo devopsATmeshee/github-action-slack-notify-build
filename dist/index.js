@@ -37389,15 +37389,15 @@ function buildSlackAttachments({ status, color, github, id }) {
   const referenceLink =
     event === 'pull_request'
       ? {
-          title: 'Pull Request',
-          value: `<${payload.pull_request.html_url} | ${payload.pull_request.title}>`,
-          short: true,
-        }
+        title: 'Pull Request',
+        value: `<${payload.pull_request.html_url} | ${payload.pull_request.title}>`,
+        short: true,
+      }
       : {
-          title: 'Branch',
-          value: `<https://github.com/${owner}/${repo}/commit/${sha} | ${branch}>`,
-          short: true,
-        };
+        title: 'Branch',
+        value: `<https://github.com/${owner}/${repo}/commit/${sha} | ${branch}>`,
+        short: true,
+      };
 
   const fields = [
     {
@@ -37421,13 +37421,8 @@ function buildSlackAttachments({ status, color, github, id }) {
       value: event,
       short: true,
     },
-    {
-      title: 'Message',
-      vaule: payload.head_commit.message,
-      short: true,
-    },
   ];
-  
+
   // if id is not null, add it to the fields
   if (id) {
     fields.splice(0, 0, {
@@ -37441,6 +37436,7 @@ function buildSlackAttachments({ status, color, github, id }) {
     {
       color,
       fields: fields,
+      text: payload.head_commit.message,
       footer_icon: 'https://github.githubassets.com/favicon.ico',
       footer: `<https://github.com/${owner}/${repo} | ${owner}/${repo}>`,
       ts: Math.floor(Date.now() / 1000),

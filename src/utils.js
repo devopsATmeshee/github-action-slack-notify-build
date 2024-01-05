@@ -44,11 +44,6 @@ function buildSlackAttachments({ status, color, github, id }) {
       value: event,
       short: true,
     },
-    {
-      title: 'Message',
-      vaule: payload.head_commit.message,
-      short: true,
-    },
   ];
 
   // if id is not null, add it to the fields
@@ -64,6 +59,7 @@ function buildSlackAttachments({ status, color, github, id }) {
     {
       color,
       fields: fields,
+      text: payload.head_commit.message,
       footer_icon: 'https://github.githubassets.com/favicon.ico',
       footer: `<https://github.com/${owner}/${repo} | ${owner}/${repo}>`,
       ts: Math.floor(Date.now() / 1000),
