@@ -37377,8 +37377,8 @@ function wrappy (fn, cb) {
 
 const { context } = __nccwpck_require__(5942);
 
-function buildSlackAttachments({ status, color, github, id }) {
-  const { payload, ref, workflow, eventName, job } = github.context;
+function buildSlackAttachments({ status, color, github, comment }) {
+  const { payload, ref, workflow, eventName } = github.context;
   const { owner, repo } = context.repo;
   const event = eventName;
   const branch = event === 'pull_request' ? payload.pull_request.head.ref : ref.replace('refs/heads/', '');
@@ -37423,12 +37423,12 @@ function buildSlackAttachments({ status, color, github, id }) {
     },
   ];
 
-  // if id is not null, add it to the fields
-  if (id) {
-    fields.splice(0, 0, {
-      title: 'ID',
-      value: id,
-      short: true,
+  // if comment is not null, add it to the fields
+  if (comment) {
+    fields.push({
+      title: 'Comment',
+      value: comment,
+      short: false,
     });
   }
 
@@ -39382,7 +39382,7 @@ const { buildSlackAttachments, formatChannelName } = __nccwpck_require__(633);
     const status = core.getInput('status');
     const color = core.getInput('color');
     const messageId = core.getInput('message_id');
-    const id = core.getInput('id');
+    const comment = core.getInput('comment');
     const token = process.env.SLACK_BOT_TOKEN;
     const slack = new WebClient(token);
 
@@ -39393,7 +39393,7 @@ const { buildSlackAttachments, formatChannelName } = __nccwpck_require__(633);
       return;
     }
 
-    const attachments = buildSlackAttachments({ status, color, github });
+    const attachments = buildSlackAttachments({ status, color, github, comment });
     const channelId = core.getInput('channel_id') || (await lookUpChannelId({ slack, channel }));
 
     if (!channelId) {

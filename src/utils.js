@@ -1,7 +1,7 @@
 const { context } = require('@actions/github');
 
-function buildSlackAttachments({ status, color, github, id }) {
-  const { payload, ref, workflow, eventName, job } = github.context;
+function buildSlackAttachments({ status, color, github, comment }) {
+  const { payload, ref, workflow, eventName } = github.context;
   const { owner, repo } = context.repo;
   const event = eventName;
   const branch = event === 'pull_request' ? payload.pull_request.head.ref : ref.replace('refs/heads/', '');
@@ -46,12 +46,12 @@ function buildSlackAttachments({ status, color, github, id }) {
     },
   ];
 
-  // if id is not null, add it to the fields
-  if (id) {
-    fields.splice(0, 0, {
-      title: 'ID',
-      value: id,
-      short: true,
+  // if comment is not null, add it to the fields
+  if (comment) {
+    fields.push({
+      title: 'Comment',
+      value: comment,
+      short: false,
     });
   }
 
