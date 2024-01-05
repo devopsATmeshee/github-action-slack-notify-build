@@ -12,6 +12,7 @@ with:
   channel: app-alerts
   status: STARTED
   color: good
+  id: notify
 env:
   SLACK_BOT_TOKEN: ${{ secrets.SLACK_NOTIFICATIONS_BOT_TOKEN }}
 ```
@@ -114,6 +115,10 @@ The ID of a previous Slack message to update instead of posting a new message. T
 ```yaml
 message_id: ${{ steps.<your_first_slack_step_id>.outputs.message_id }}
 ```
+
+### `id`
+
+The ID of this workflow/job, use for displaying different components or identifiers.
 
 ## Outputs
 

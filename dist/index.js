@@ -37377,7 +37377,7 @@ function wrappy (fn, cb) {
 
 const { context } = __nccwpck_require__(5942);
 
-function buildSlackAttachments({ status, color, github }) {
+function buildSlackAttachments({ status, color, github, id }) {
   const { payload, ref, workflow, eventName, job } = github.context;
   const { owner, repo } = context.repo;
   const event = eventName;
@@ -37399,37 +37399,48 @@ function buildSlackAttachments({ status, color, github }) {
           short: true,
         };
 
+  const fields = [
+    {
+      title: 'Repo',
+      value: `<https://github.com/${owner}/${repo} | ${owner}/${repo}>`,
+      short: true,
+    },
+    {
+      title: 'Workflow',
+      value: `<https://github.com/${owner}/${repo}/actions/runs/${runId} | ${workflow}>`,
+      short: true,
+    },
+    {
+      title: 'Status',
+      value: status,
+      short: true,
+    },
+    referenceLink,
+    {
+      title: 'Event',
+      value: event,
+      short: true,
+    },
+    {
+      title: 'Message',
+      vaule: payload.head_commit.message,
+      short: true,
+    },
+  ];
+  
+  // if id is not null, add it to the fields
+  if (id) {
+    fields.splice(0, 0, {
+      title: 'ID',
+      value: id,
+      short: true,
+    });
+  }
+
   return [
     {
       color,
-      fields: [
-        {
-          title: 'Repo',
-          value: `<https://github.com/${owner}/${repo} | ${owner}/${repo}>`,
-          short: true,
-        },
-        {
-          title: 'Workflow',
-          value: `<https://github.com/${owner}/${repo}/actions/runs/${runId} | ${workflow}>`,
-          short: true,
-        },
-        {
-          title: 'Job',
-          value: job,
-          short: true,
-        },
-        {
-          title: 'Status',
-          value: status,
-          short: true,
-        },
-        referenceLink,
-        {
-          title: 'Event',
-          value: event,
-          short: true,
-        },
-      ],
+      fields: fields,
       footer_icon: 'https://github.githubassets.com/favicon.ico',
       footer: `<https://github.com/${owner}/${repo} | ${owner}/${repo}>`,
       ts: Math.floor(Date.now() / 1000),
@@ -39375,6 +39386,7 @@ const { buildSlackAttachments, formatChannelName } = __nccwpck_require__(633);
     const status = core.getInput('status');
     const color = core.getInput('color');
     const messageId = core.getInput('message_id');
+    const id = core.getInput('id');
     const token = process.env.SLACK_BOT_TOKEN;
     const slack = new WebClient(token);
 

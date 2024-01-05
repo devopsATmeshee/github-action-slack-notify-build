@@ -1,6 +1,6 @@
 const { context } = require('@actions/github');
 
-function buildSlackAttachments({ status, color, github }) {
+function buildSlackAttachments({ status, color, github, id }) {
   const { payload, ref, workflow, eventName, job } = github.context;
   const { owner, repo } = context.repo;
   const event = eventName;
@@ -22,37 +22,48 @@ function buildSlackAttachments({ status, color, github }) {
           short: true,
         };
 
+  const fields = [
+    {
+      title: 'Repo',
+      value: `<https://github.com/${owner}/${repo} | ${owner}/${repo}>`,
+      short: true,
+    },
+    {
+      title: 'Workflow',
+      value: `<https://github.com/${owner}/${repo}/actions/runs/${runId} | ${workflow}>`,
+      short: true,
+    },
+    {
+      title: 'Status',
+      value: status,
+      short: true,
+    },
+    referenceLink,
+    {
+      title: 'Event',
+      value: event,
+      short: true,
+    },
+    {
+      title: 'Message',
+      vaule: payload.head_commit.message,
+      short: true,
+    },
+  ];
+
+  // if id is not null, add it to the fields
+  if (id) {
+    fields.splice(0, 0, {
+      title: 'ID',
+      value: id,
+      short: true,
+    });
+  }
+
   return [
     {
       color,
-      fields: [
-        {
-          title: 'Repo',
-          value: `<https://github.com/${owner}/${repo} | ${owner}/${repo}>`,
-          short: true,
-        },
-        {
-          title: 'Workflow',
-          value: `<https://github.com/${owner}/${repo}/actions/runs/${runId} | ${workflow}>`,
-          short: true,
-        },
-        {
-          title: 'Job',
-          value: job,
-          short: true,
-        },
-        {
-          title: 'Status',
-          value: status,
-          short: true,
-        },
-        referenceLink,
-        {
-          title: 'Event',
-          value: event,
-          short: true,
-        },
-      ],
+      fields: fields,
       footer_icon: 'https://github.githubassets.com/favicon.ico',
       footer: `<https://github.com/${owner}/${repo} | ${owner}/${repo}>`,
       ts: Math.floor(Date.now() / 1000),
